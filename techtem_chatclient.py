@@ -52,10 +52,14 @@ def chat_client():
 				message = sys.stdin.readline()
 				if message[0] == "/":
 					#that message was a command
-					if message.split()[0] == "/changename":
+					if message.split()[0] == "/changename": 
 						name = message[len(message.split()[0])+1:].replace("\n","")
 					elif message.split()[0] == "/changetripcode":
 						tripcode = message[len(message.split()[0])+1:].replace("\n","")
+					elif message.split()[0] == "/quit" or message.split()[0] == "/leave":
+						quit()
+					elif message.split()[0] == "/help" or message.split()[0] == "/?":
+						sys.stdout.write("Thanks for using the techtemchat client. Here are the commands you currently have available:" + '\n' + "/changename: changes your name." + '\n' + "/changetripcode: changes your trip code." + '\n' + "/quit OR /leave: exits gracefully" + '\n' + "/help OR /?: Displays this menu." + '\n')
 					else:
 						print "Invalid command"
 				else:
