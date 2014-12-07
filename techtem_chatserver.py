@@ -50,7 +50,7 @@ def chat_server():
 					# there is something in the socket
 					#find the name and the tripcode, if any
 					message = data.splitlines()[0]
-					if message = "":
+					if message == "":
 						doDisplay = False
 					try:
 						name = data.splitlines()[1]
