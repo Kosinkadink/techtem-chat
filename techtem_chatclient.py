@@ -27,7 +27,7 @@ def chat_client():
 	else:
 		tripcode = raw_input("Tripcode (also optional):")
 
-	sys.stdout.write("\n[" + name + "]"); sys.stdout.flush()
+	sys.stdout.write("\n[" + name + "] "); sys.stdout.flush()
  
 	while 1:
 		socket_list = [sys.stdin, s]
