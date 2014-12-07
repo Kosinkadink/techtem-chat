@@ -57,7 +57,7 @@ def chat_server():
 						tripcode = data.splitlines()[2]
 						doDisplay = True
 					except:
-						print "Poorly formated message sent"
+						print "Poorly formatted message sent"
 						doDisplay = False
 					hsh = ""
 					if name != "":
@@ -91,7 +91,7 @@ def chat_server():
 						SOCKET_LIST.remove(sock)
 
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sock, "\nSomeone has diconnected") 
+						broadcast(server_socket, sock, "\nSomeone has disconnected") 
 
 
 	server_socket.close()
