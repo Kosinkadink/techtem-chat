@@ -1,6 +1,7 @@
 #!/usr/bin/python2
-import sys, socket, select
+import sys, socket, select, os
 from JedEncryptM import JedEncrypt
+from time import strftime
 
 f = JedEncrypt()
 
@@ -52,14 +53,27 @@ def chat_server():
 					name = data.splitlines()[1]
 					hsh = ""
 					if name != "":
-						tripcode = data.splitlines()[2]
-						if tripcode != "":
+						try:
+							tripcode = data.splitlines()[2]
 							#hash the tripcode
 							f.key(tripcode)
 							hsh = f.encrypt(tripcode) 
+						except:
+							hsh = ""
 					else:
 						name = "Anonymous"
-					display = "\n[" + name + "] " + hsh + ": " + message
+					time = strftime("%H:%M:%S")
+					date = strftime("%Y-%m-%d")
+					#format the information for the message into stuff
+					display = "\n[" + name + "] " + hsh + " <" + time + ">: " + message
+					print display
+					#log the stuff
+					if os.path.isfile(date):
+						log = open(date, "a")
+					else:
+						log = open(date, "w")
+					log.write(display)
+					log.close()
 					#send the stuff
 					broadcast(server_socket, sock, display)  
 				else:

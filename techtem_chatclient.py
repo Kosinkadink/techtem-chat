@@ -51,10 +51,13 @@ def chat_client():
 				# user entered a message
 				message = sys.stdin.readline()
 				if message[0] == "/":
+					#that message was a command
 					if message.split()[0] == "/changename":
-						name = raw_input("New name: ")
-					if message.split()[0] == "/changetripcode":
-						tripcode = raw_input("New tripcode: ")
+						name = message[len(message.split()[0])+1:].replace("\n","")
+					elif message.split()[0] == "/changetripcode ":
+						tripcode = message[len(message.split()[0])+1:].replace("\n","")
+					else:
+						print "Invalid command"
 				else:
 					data = message + name + "\n" + tripcode
 					s.send(data)
