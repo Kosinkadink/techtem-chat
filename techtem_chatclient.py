@@ -27,7 +27,7 @@ def chat_client():
 	else:
 		tripcode = raw_input("Tripcode (also optional):")
 
-	sys.stdout.write("[" + name + "]"); sys.stdout.flush()
+	sys.stdout.write("\n[" + name + "]"); sys.stdout.flush()
  
 	while 1:
 		socket_list = [sys.stdin, s]
@@ -59,13 +59,13 @@ def chat_client():
 					elif message.split()[0] == "/quit" or message.split()[0] == "/leave":
 						quit()
 					elif message.split()[0] == "/help" or message.split()[0] == "/?":
-						sys.stdout.write("Thanks for using the techtemchat client. Here are the commands you currently have available:" + '\n' + "/changename: changes your name." + '\n' + "/changetripcode: changes your trip code." + '\n' + "/quit OR /leave: exits gracefully" + '\n' + "/help OR /?: Displays this menu." + '\n')
+						sys.stdout.write("\nThanks for using the techtemchat client. Here are the commands you currently have available:\n/changename: changes your name\n/changetripcode: changes your trip code.\n/quit OR /leave: exits gracefully\n/help OR /?: Displays this menu.")
 					else:
 						print "Invalid command"
 				else:
 					data = message + name + "\n" + tripcode
 					s.send(data)
-				sys.stdout.write('[' + name + '] '); sys.stdout.flush() 
+				sys.stdout.write('\n[' + name + '] '); sys.stdout.flush() 
 
 if __name__ == "__main__":
 

@@ -50,11 +50,17 @@ def chat_server():
 					# there is something in the socket
 					#find the name and the tripcode, if any
 					message = data.splitlines()[0]
-					name = data.splitlines()[1]
+					try:
+						name = data.splitlines()[1]
+						tripcode = data.splitlines()[2]
+						doDisplay = True
+					except:
+						print "Poorly formated message sent"
+						doDisplay = False
+						break
 					hsh = ""
 					if name != "":
 						try:
-							tripcode = data.splitlines()[2]
 							#hash the tripcode
 							f.key(tripcode)
 							hsh = f.encrypt(tripcode) 
@@ -65,7 +71,8 @@ def chat_server():
 					time = strftime("%H:%M:%S")
 					date = strftime("%Y-%m-%d")
 					#format the information for the message into stuff
-					display = "\n[" + name + "] " + hsh + " <" + time + ">: " + message
+					if doDisplay:
+						display = "\n[" + name + "] " + hsh + " <" + time + ">: " + message
 					print display
 					#log the stuff
 					if os.path.isfile(date):
