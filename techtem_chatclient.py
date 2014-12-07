@@ -54,7 +54,7 @@ def chat_client():
 					#that message was a command
 					if message.split()[0] == "/changename":
 						name = message[len(message.split()[0])+1:].replace("\n","")
-					elif message.split()[0] == "/changetripcode ":
+					elif message.split()[0] == "/changetripcode":
 						tripcode = message[len(message.split()[0])+1:].replace("\n","")
 					else:
 						print "Invalid command"
