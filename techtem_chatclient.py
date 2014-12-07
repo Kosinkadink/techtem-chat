@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 import sys
 import socket
 import select
@@ -16,10 +17,18 @@ def chat_client():
 	except :
 		print 'Unable to connect'
 		sys.exit()
-	 
+	
 	print 'Connected to remote host. You can start sending messages'
-	sys.stdout.write('[Me] '); sys.stdout.flush()
-	 
+	
+	#request information
+	name = raw_input("Name (optional):")
+	if name == "":
+		tripcode = ""
+	else:
+		tripcode = raw_input("Tripcode (also optional):")
+
+	sys.stdout.write("[" + name + "]"); sys.stdout.flush()
+ 
 	while 1:
 		socket_list = [sys.stdin, s]
 		 
@@ -36,13 +45,13 @@ def chat_client():
 				else :
 					#print data
 					sys.stdout.write(data)
-					sys.stdout.write('[Me] '); sys.stdout.flush()	 
+					sys.stdout.write('\n[' + name + '] '); sys.stdout.flush()	 
 			
 			else :
 				# user entered a message
-				msg = sys.stdin.readline()
+				msg =sys.stdin.readline() + name + "\n" + tripcode
 				s.send(msg)
-				sys.stdout.write('[Me] '); sys.stdout.flush() 
+				sys.stdout.write('[' + name + '] '); sys.stdout.flush() 
 
 if __name__ == "__main__":
 
