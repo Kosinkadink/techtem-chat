@@ -10,6 +10,24 @@ SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
 
+lies = ["jaz is not rad", "jaz isn't rad"]
+
+def date():
+	return strftime("%Y-%m-%d")
+
+def time():
+	return strftime("%H:%M:%S")
+
+def localLog(a):
+	print a
+	log = open(date(), "a")
+	log.write(time() + " " + a + "\n")
+	log.close
+
+def announce(server_socket, sock, b):
+	broadcast(server_socket, sock, b)
+	localLog(b)
+
 def chat_server():
 
 	server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,9 +51,9 @@ def chat_server():
 			if sock == server_socket: 
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-				print "Client (%s, %s) connected" % addr
+				localLog("Client (%s, %s) connected" % addr)
 
-				broadcast(server_socket, sockfd, "\nSomeone has entered the chat")
+				announce(server_socket, sockfd, "Someone has entered the chat")
 
 			# a message from a client, not a new connection
 			else:
@@ -44,7 +62,7 @@ def chat_server():
 				# receiving data from the socket.
 					data = sock.recv(RECV_BUFFER)
 				except:
-					broadcast(server_socket, sock, "\nSomeone has disconnected")
+					announce(server_socket, sock, "Someone has disconnected")
 					continue
 				if data:
 					# there is something in the socket
@@ -56,7 +74,7 @@ def chat_server():
 						try:
 							name = data.splitlines()[1]
 						except:
-							print "Poorly formatted message sent"
+							localLog("Poorly formatted message sent")
 							doDisplay = False
 						if name != "":
 							try:
@@ -69,26 +87,20 @@ def chat_server():
 						else:
 							hsh = ""
 							name = "Anonymous"
-						time = strftime("%H:%M:%S")
-						date = strftime("%Y-%m-%d")
 						if doDisplay:
 							#format all information into readable stuff
-							display = "[" + name + "] " + hsh + " <" + time + ">: " + message
-							print display
-							#log the stuff
-							log = open(date, "a")
-							log.write(display)
-							log.close()
-							#send the stuff
-							broadcast(server_socket, sock, display)  
+							if message.lower() not in lies:
+								display = "[" + name + "] " + hsh + " <" + time() + ">: " + message
+							else:
+								display = name + " has lied."
+							announce(server_socket, sock, display)
 				else:
 					# remove the socket that's broken   
 					if sock in SOCKET_LIST:
 						SOCKET_LIST.remove(sock)
 
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sock, "\nSomeone has disconnected") 
-
+						announce(server_socket, sock, "Someone has disconnected") 
 
 	server_socket.close()
     
