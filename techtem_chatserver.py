@@ -48,43 +48,40 @@ def chat_server():
 					continue
 				if data:
 					# there is something in the socket
-					#find the name and the tripcode, if any
+					#find the message, if any
+					print data
 					message = data.splitlines()[0]
-					if message == "" or message is None:
-						doDisplay = False
-					else:
+					print "message: " + message
+					doDisplay = True
+					if message:
+						#find the name, if any
 						try:
 							name = data.splitlines()[1]
-							tripcode = data.splitlines()[2]
-							doDisplay = True
 						except:
-							#print "Poorly formatted message sent"
+							print "Poorly formatted message sent"
 							doDisplay = False
 						if name != "":
 							try:
-								#hash the tripcode
+								#find and hash the tripcode
+								tripcode = data.splitlines()[2]
 								f.key(tripcode)
 								hsh = f.encrypt(tripcode) 
 							except:
 								hsh = ""
 						else:
-							doDisplay = True
 							hsh = ""
 							name = "Anonymous"
 						time = strftime("%H:%M:%S")
 						date = strftime("%Y-%m-%d")
-						#format the information for the message into stuff
 						if doDisplay:
-							display = "\n[" + name + "] " + hsh + " <" + time + ">: " + message
+							#format all information into readable stuff
+							display = "[" + name + "] " + hsh + " <" + time + ">: " + message
 							print display
 							#log the stuff
-							if os.path.isfile(date):
-								log = open(date, "a")
-							else:
-								log = open(date, "w")
+							log = open(date, "a")
 							log.write(display)
 							log.close()
-								#send the stuff
+							#send the stuff
 							broadcast(server_socket, sock, display)  
 				else:
 					# remove the socket that's broken   
