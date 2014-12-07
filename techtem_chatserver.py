@@ -50,6 +50,8 @@ def chat_server():
 					# there is something in the socket
 					#find the name and the tripcode, if any
 					message = data.splitlines()[0]
+					if message = "":
+						doDisplay = False
 					try:
 						name = data.splitlines()[1]
 						tripcode = data.splitlines()[2]
@@ -57,7 +59,6 @@ def chat_server():
 					except:
 						print "Poorly formated message sent"
 						doDisplay = False
-						break
 					hsh = ""
 					if name != "":
 						try:
@@ -67,6 +68,7 @@ def chat_server():
 						except:
 							hsh = ""
 					else:
+						doDisplay = True
 						name = "Anonymous"
 					time = strftime("%H:%M:%S")
 					date = strftime("%Y-%m-%d")
