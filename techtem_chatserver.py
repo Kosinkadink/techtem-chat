@@ -49,9 +49,7 @@ def chat_server():
 				if data:
 					# there is something in the socket
 					#find the message, if any
-					print data
 					message = data.splitlines()[0]
-					print "message: " + message
 					doDisplay = True
 					if message:
 						#find the name, if any
