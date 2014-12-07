@@ -33,9 +33,9 @@ def chat_server():
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
 				print "Client (%s, %s) connected" % addr
-                 
-				broadcast(server_socket, sockfd, "[%s:%s] entered our chatting room\n" % addr)
-             
+
+				broadcast(server_socket, sockfd, "\nSomeone has entered the chat")
+
 			# a message from a client, not a new connection
 			else:
 			        # process data recieved from client, 
@@ -43,7 +43,7 @@ def chat_server():
 				# receiving data from the socket.
 					data = sock.recv(RECV_BUFFER)
 				except:
-					broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr)
+					broadcast(server_socket, sock, "\nSomeone has disconnected")
 					continue
 				if data:
 					# there is something in the socket
@@ -59,7 +59,7 @@ def chat_server():
 							hsh = f.encrypt(tripcode) 
 					else:
 						name = "Anonymous"
-					display = "\r[" + name + "] " + hsh + ": " + message
+					display = "\n[" + name + "] " + hsh + ": " + message
 					#send the stuff
 					broadcast(server_socket, sock, display)  
 				else:
@@ -68,7 +68,7 @@ def chat_server():
 						SOCKET_LIST.remove(sock)
 
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sock, "Client (%s, %s) is offline\n" % addr) 
+						broadcast(server_socket, sock, "\nSomeone has diconnected") 
 
 
 	server_socket.close()

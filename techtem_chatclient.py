@@ -49,8 +49,15 @@ def chat_client():
 			
 			else :
 				# user entered a message
-				msg =sys.stdin.readline() + name + "\n" + tripcode
-				s.send(msg)
+				message = sys.stdin.readline()
+				if message[0] == "/":
+					if message.split()[0] == "/changename":
+						name = raw_input("New name: ")
+					if message.split()[0] == "/changetripcode":
+						tripcode = raw_input("New tripcode: ")
+				else:
+					data = message + name + "\n" + tripcode
+					s.send(data)
 				sys.stdout.write('[' + name + '] '); sys.stdout.flush() 
 
 if __name__ == "__main__":
