@@ -82,8 +82,8 @@ def chat_server():
 							log = open(date, "a")
 						else:
 							log = open(date, "w")
-							log.write(display)
-							log.close()
+						log.write(display)
+						log.close()
 						#send the stuff
 						broadcast(server_socket, sock, display)  
 						display=""
