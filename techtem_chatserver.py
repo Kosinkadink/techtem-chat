@@ -60,7 +60,6 @@ def chat_server():
 						except:
 							#print "Poorly formatted message sent"
 							doDisplay = False
-						hsh=""
 						if name != "":
 							try:
 								#hash the tripcode
@@ -70,23 +69,23 @@ def chat_server():
 								hsh = ""
 						else:
 							doDisplay = True
+							hsh = ""
 							name = "Anonymous"
-					time = strftime("%H:%M:%S")
-					date = strftime("%Y-%m-%d")
-					#format the information for the message into stuff
-					if doDisplay:
-						display = "\n[" + name + "] " + hsh + " <" + time + ">: " + message
-						print display
-						#log the stuff
-						if os.path.isfile(date):
-							log = open(date, "a")
-						else:
-							log = open(date, "w")
-						log.write(display)
-						log.close()
-						#send the stuff
-						broadcast(server_socket, sock, display)  
-						display=""
+						time = strftime("%H:%M:%S")
+						date = strftime("%Y-%m-%d")
+						#format the information for the message into stuff
+						if doDisplay:
+							display = "\n[" + name + "] " + hsh + " <" + time + ">: " + message
+							print display
+							#log the stuff
+							if os.path.isfile(date):
+								log = open(date, "a")
+							else:
+								log = open(date, "w")
+							log.write(display)
+							log.close()
+								#send the stuff
+							broadcast(server_socket, sock, display)  
 				else:
 					# remove the socket that's broken   
 					if sock in SOCKET_LIST:
