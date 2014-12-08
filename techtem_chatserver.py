@@ -16,7 +16,7 @@ def chat_server():
 	server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	server_socket.bind((HOST, PORT))
 	server_socket.listen(10)
- 
+	display="" 
 	# add server socket object to the list of readable connections
 	SOCKET_LIST.append(server_socket)
 
@@ -50,41 +50,44 @@ def chat_server():
 					# there is something in the socket
 					#find the name and the tripcode, if any
 					message = data.splitlines()[0]
-					if message == "":
+					if message == "" or message is None:
 						doDisplay = False
-					try:
-						name = data.splitlines()[1]
-						tripcode = data.splitlines()[2]
-						doDisplay = True
-					except:
-						print "Poorly formatted message sent"
-						doDisplay = False
-					hsh = ""
-					if name != "":
-						try:
-							#hash the tripcode
-							f.key(tripcode)
-							hsh = f.encrypt(tripcode) 
-						except:
-							hsh = ""
 					else:
-						doDisplay = True
-						name = "Anonymous"
+						try:
+							name = data.splitlines()[1]
+							tripcode = data.splitlines()[2]
+							doDisplay = True
+						except:
+							#print "Poorly formatted message sent"
+							doDisplay = False
+						hsh = ""
+						if name != "":
+							try:
+								#hash the tripcode
+								f.key(tripcode)
+								hsh = f.encrypt(tripcode) 
+							except:
+								hsh = ""
+						else:
+							doDisplay = True
+							name = "Anonymous"
 					time = strftime("%H:%M:%S")
 					date = strftime("%Y-%m-%d")
 					#format the information for the message into stuff
 					if doDisplay:
 						display = "\n[" + name + "] " + hsh + " <" + time + ">: " + message
-					print display
+						print display
 					#log the stuff
 					if os.path.isfile(date):
 						log = open(date, "a")
 					else:
 						log = open(date, "w")
-					log.write(display)
-					log.close()
+					if doDisplay != False:
+						log.write(display)
+						log.close()
 					#send the stuff
 					broadcast(server_socket, sock, display)  
+					display=""
 				else:
 					# remove the socket that's broken   
 					if sock in SOCKET_LIST:
