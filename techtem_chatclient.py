@@ -3,10 +3,13 @@ import os
 import sys
 import socket
 import select
+
 LOG=[] #for tracking the conversation. currently is not limited in length, can't be good for RAM.
 maxtexts=20 #for tracking the max amount of messages to print.
+
 def save(): 
 	print ("Save function not implemented yet.")
+
 def chat_client():
 
 	host = 'localhost'
@@ -26,12 +29,14 @@ def chat_client():
 	
 	#request information
 	name = raw_input("Name (optional): ")
+	dispname = name
 	if name == "":
+		dispname = "Anonymous"
 		tripcode = ""
 	else:
 		tripcode = raw_input("Tripcode (also optional): ")
 
-	sys.stdout.write("\n[" + name + "] "); sys.stdout.flush()
+	sys.stdout.write("\n[" + dispname + "] "); sys.stdout.flush()
  
 	while 1:
 		socket_list = [sys.stdin, s]
@@ -53,8 +58,8 @@ def chat_client():
 						sys.stdout.write('\n'.join(LOG[:len(LOG)])) #writes data up to maxtexts.
 					else :
 						sys.stdout.write('\n'.join(LOG[len(LOG)-maxtexts:len(LOG)])) #same as the if above. writes the last maxtexts amount of messages to stdout.
-					sys.stdout.write('\n\n[' + name + '] ') # skips to new first line, rewrites name.
-					sys.stdout.flush()	 
+					sys.stdout.write('\n\n[' + dispname + '] ') # skips to new first line, rewrites name.
+					sys.stdout.flush()
 					
 			else :
 				# user entered a message
@@ -75,7 +80,7 @@ def chat_client():
 				else:
 					data = message + name + "\n" + tripcode
 					s.send(data)
-				sys.stdout.write('[' + name + '] ')
+				sys.stdout.write('[' + dispname + '] ')
 				sys.stdout.flush() 
 
 if __name__ == "__main__":
