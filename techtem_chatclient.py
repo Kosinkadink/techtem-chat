@@ -1,8 +1,12 @@
 #!/usr/bin/python2
+import os
 import sys
 import socket
 import select
- 
+LOG=[]
+maxtexts=20
+def save(): 
+	print ("Save function not implemented yet.")
 def chat_client():
 
 	host = 'localhost'
@@ -43,13 +47,15 @@ def chat_client():
 					print '\nDisconnected from chat server'
 					sys.exit()
 				else :
-					#print data
-					sys.stdout.write("\r") # brings cursor to the beginning of the line, probably skips line
-					sys.stdout.write("\033[F") # brings cursor up one line, where the old text is now
-					sys.stdout.write('\n' + data) # skips line (due to change with server), writes data on top of old text
-					sys.stdout.write('\n[' + name + '] ') # skips to new first line, rewrites name
+					LOG.append(data) #defined at the beginning. adds the new data to the LOG.
+					os.system('cls' if os.name == 'nt' else 'clear')
+					if len(LOG) < maxtexts :
+						sys.stdout.write('\n'.join(LOG[:len(LOG)])) #writes data up to desired amount of messages.
+					else :
+						sys.stdout.write('\n'.join(LOG[len(LOG)-maxtexts:len(LOG)])) #same as the if above
+					sys.stdout.write('\n\n[' + name + '] ') # skips to new first line, rewrites name
 					sys.stdout.flush()	 
-			
+					
 			else :
 				# user entered a message
 				message = sys.stdin.readline()
@@ -60,9 +66,10 @@ def chat_client():
 					elif message.split()[0] == "/changetripcode":
 						tripcode = message[len(message.split()[0])+1:].replace("\n","")
 					elif message.split()[0] == "/quit" or message.split()[0] == "/leave":
+						save() #dummy function for now. will implement an option to save a local copy of the recorded chat. otherwise, all variables are flushed.
 						quit()
 					elif message.split()[0] == "/help" or message.split()[0] == "/?":
-						sys.stdout.write("\nThanks for using the techtemchat client. Here are the commands you currently have available:\n/changename + new name: changes your name\n/changetripcode + new tripcode: changes your trip code.\n/quit OR /leave: exits gracefully\n/help OR /?: Displays this menu.\n")
+						sys.stdout.write("\nThanks for using the techtemchat client. Here are the commands you currently have available:\n/changename + new name: changes your name\n/changetripcode + new tripcode: changes your trip code.\n/quit OR /leave: exits gracefully\n/help OR /?: Displays this menu.\n")						
 					else:
 						print "Invalid command"
 				else:

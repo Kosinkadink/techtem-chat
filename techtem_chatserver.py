@@ -108,7 +108,7 @@ def chat_server():
 def broadcast (server_socket, sock, message):
 	for socket in SOCKET_LIST:
 		# send the message only to peer
-		if socket != server_socket and socket != sock :
+		if socket != server_socket:
 			try :
 				socket.send(message)
 			except :
