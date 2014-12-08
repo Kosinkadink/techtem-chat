@@ -75,7 +75,7 @@ def chat_client():
 				else:
 					data = message + name + "\n" + tripcode
 					s.send(data)
-				sys.stdout.write('[' + dispname + '] ')
+				sys.stdout.write('[' + name + '] ')
 				sys.stdout.flush() 
 
 if __name__ == "__main__":
