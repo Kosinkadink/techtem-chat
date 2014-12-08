@@ -4,7 +4,7 @@ import sys
 import socket
 import select
 
-LOG=[] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
+LOG=[""] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
 
 def save(): 
 	print ("Save function not implemented yet.")
@@ -52,7 +52,7 @@ def chat_client():
 				else :
 					LOG.append(data) #defined at the beginning. adds the new data to the LOG.
 					os.system('cls' if os.name == 'nt' else 'tput reset') #cross platform screen clearing. this just in, clears the ENTIRE SHELL
-					sys.stdout.write('\n'.join(LOG[len(LOG)])) #prints the entire log. alll of it.
+					sys.stdout.write('\n'.join(LOG[:])) #prints the entire log. alll of it.
 					sys.stdout.write('\n\n[' + name + '] ') # skips to new first line, rewrites name.
 					sys.stdout.flush()
 					
