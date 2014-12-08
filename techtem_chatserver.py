@@ -51,9 +51,8 @@ def chat_server():
 			if sock == server_socket: 
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-				localLog("Client (%s, %s) connected" % addr)
-
 				announce(server_socket, sockfd, "Someone has entered the chat")
+				localLog("(%s, %s)" % addr)
 
 			# a message from a client, not a new connection
 			else:
@@ -76,7 +75,7 @@ def chat_server():
 						except:
 							localLog("Poorly formatted message sent")
 							doDisplay = False
-						if name != "":
+						if name:
 							try:
 								#find and hash the tripcode
 								tripcode = data.splitlines()[2]
