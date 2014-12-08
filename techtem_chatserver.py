@@ -60,6 +60,7 @@ def chat_server():
 						except:
 							#print "Poorly formatted message sent"
 							doDisplay = False
+						hsh=""
 						if name != "":
 							try:
 								#hash the tripcode
