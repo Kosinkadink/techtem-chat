@@ -4,8 +4,7 @@ import sys
 import socket
 import select
 
-LOG=[] #for tracking the conversation. currently is not limited in length, can't be good for RAM.
-maxtexts=20 #for tracking the max amount of messages to print.
+LOG=[""] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
 
 def save(): 
 	print ("Save function not implemented yet.")
@@ -29,14 +28,13 @@ def chat_client():
 	
 	#request information
 	name = raw_input("Name (optional): ")
-	dispname = name
 	if name == "":
-		dispname = "Anonymous"
+		name = "Anonymous" #keeping it simple. having another variable for dispname will only confuse.
 		tripcode = ""
 	else:
 		tripcode = raw_input("Tripcode (also optional): ")
 
-	sys.stdout.write("\n[" + dispname + "] "); sys.stdout.flush()
+	sys.stdout.write("\n[" + name + "] "); sys.stdout.flush()
  
 	while 1:
 		socket_list = [sys.stdin, s]
@@ -53,12 +51,9 @@ def chat_client():
 					sys.exit()
 				else :
 					LOG.append(data) #defined at the beginning. adds the new data to the LOG.
-					os.system('cls' if os.name == 'nt' else 'clear') #cross platform screen clearing.
-					if len(LOG) < maxtexts : #can't have negative LOG[] numbers.
-						sys.stdout.write('\n'.join(LOG[:len(LOG)])) #writes data up to maxtexts.
-					else :
-						sys.stdout.write('\n'.join(LOG[len(LOG)-maxtexts:len(LOG)])) #same as the if above. writes the last maxtexts amount of messages to stdout.
-					sys.stdout.write('\n\n[' + dispname + '] ') # skips to new first line, rewrites name.
+					os.system('cls' if os.name == 'nt' else 'tput reset') #cross platform screen clearing. this just in, clears the ENTIRE SHELL
+					sys.stdout.write('\n'.join(LOG[:])) #prints the entire log. alll of it.
+					sys.stdout.write('\n\n[' + name + '] ') # skips to new first line, rewrites name.
 					sys.stdout.flush()
 					
 			else :
@@ -80,7 +75,7 @@ def chat_client():
 				else:
 					data = message + name + "\n" + tripcode
 					s.send(data)
-				sys.stdout.write('[' + dispname + '] ')
+				sys.stdout.write('[' + name + '] ')
 				sys.stdout.flush() 
 
 if __name__ == "__main__":
