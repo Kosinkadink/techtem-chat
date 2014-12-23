@@ -35,7 +35,7 @@ def chat_server():
 	SOCKET_LIST.append(server_socket)
 
 	log = open(date(), "a")
-        log.write(timestamp() + "Server has started.")
+        log.write(timestamp() + "Server has started.\n")
         log.close
 
 	while 1:
