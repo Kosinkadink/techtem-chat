@@ -64,11 +64,12 @@ def chat_server():
 					# there is something in the socket
 					#find the message, if any
 					message = data.splitlines()[0]
-					doDisplay = True
 					if message:
 						#find the name, if any
 						try:
 							name = data.splitlines()[1]
+                                                        if name == "":
+                                                            name = "Anonymous"
 						except:
 							name = "Anonymous"
 						try:
@@ -81,13 +82,14 @@ def chat_server():
                                                                 hsh = ""
 						except:
 							hsh = ""
-						if doDisplay:
-							#format all information into readable stuff
-							if message.lower() not in maliciouswords:
-								display = "[" + name + "] {" + hsh + "}: " + message
-							else:
-								display = name + " has said malicious words."
-							broadcast(server_socket, sock, display)
+                                                if hsh:
+                                                        hsh = " {" + hsh + "}"
+						#format all information into readable stuff
+						if message.lower() not in maliciouswords:
+							display = "[" + name + "]" + hsh + ": " + message
+						else:
+							display = name + " has said malicious words."
+						broadcast(server_socket, sock, display)
 				else:
 					# remove the socket that's broken   
 					if sock in SOCKET_LIST:
