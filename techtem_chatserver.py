@@ -53,52 +53,72 @@ def chat_server():
 			if sock == server_socket: 
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-                                sockid = randint(1,100)
+                                sockid = 0
+                                while sockid in idlist:
+                                        sockid = randint(1,100)
                                 idlist.append(sockid)
-                                sockid = str(sockid)
+                                sockid = "{0:0=3d}".format(sockid)
 				broadcast(server_socket, sockfd, sockid, "Someone has entered the chat")
 
 			# a message from a client, not a new connection
 			else:
-                                sockid = str(idlist[SOCKET_LIST.index(sock)])
-			        # process data recieved from client, 
-				try:
-				# receiving data from the socket.
-					data = sock.recv(RECV_BUFFER)
-				except:
-					broadcast(server_socket, sock, sockid, "Someone has disconnected")
-					continue
-				if data:
-					# there is something in the socket
-					#find the message, if any
-					message = data.splitlines()[0]
-					if message:
-						#find the name, if any
-						try:
-							name = data.splitlines()[1]
+                                sockid = "{0:0=3d}".format(idlist[SOCKET_LIST.index(sock)])
+    			        # process data recieved from client, 
+			        try:
+			                # receiving data from the socket.
+				        data = sock.recv(RECV_BUFFER)
+                                except:
+                                        broadcast(server_socket, sock, sockid, "Someone has disconnected")
+		        	    	continue
+			    	if data:
+			        	# there is something in the socket
+            				#find the message, if any
+	    				message = data.splitlines()[0]
+    	        			if message:
+                                                if message[0] == "/":
+                                                        isCommand = True
+                                                        command = message.split()[0]
+                                                else:
+                                                        isCommand = False
+
+	        				#find the name, if any
+		        			try:
+			        			name = data.splitlines()[1]
                                                         if name == "":
                                                             name = "Anonymous"
-						except:
-							name = "Anonymous"
-						try:
-							#find and hash the tripcode
-							tripcode = data.splitlines()[2]
+					        except:
+        						name = "Anonymous"
+	        				try:
+		        				#find and hash the tripcode
+		        				tripcode = data.splitlines()[2]
                                                         if tripcode:
-							        f.key(tripcode)
-							        hsh = f.encrypt(tripcode)
+				        		        f.key(tripcode)
+						        	hsh = f.encrypt(tripcode)
                                                         else:
                                                                 hsh = ""
-						except:
-							hsh = ""
+		        			except:
+			        			hsh = ""
                                                 if hsh:
-                                                        hsh = " {" + hsh + "}"
-						#format all information into readable stuff
-						if message.lower() not in maliciouswords:
-							display = "[" + name + "]" + hsh + ": " + message
-						else:
-							display = name + " has said malicious words."
-						broadcast(server_socket, sock, sockid, display)
-				else:
+                                                       hsh = " {" + hsh + "}"
+			        		#format all information into readable stuff
+				        	if message.lower() not in maliciouswords:
+        						display = "[" + name + "]" + hsh + ": " + message
+	        				else:
+		        				display = name + " has said malicious words."
+                                                if not isCommand:
+                                                        broadcast(server_socket, sock, sockid, display)
+                                                elif command == "/pm":
+                                                        target = message.split()[1]
+                                                        targetid = 0
+                                                        with open(date(), "r") as log:
+                                                                for line in log:
+                                                                        if target in line:
+                                                                                targetid = int(line[-3:-1])
+                                                        if targetid:
+                                                                SOCKET_LIST[idlist.index(targetid)].send("##pm##" + display)
+                                                        else:
+                                                                sock.send("Invalid target")
+                                else:
 					# remove the socket that's broken   
 					if sock in SOCKET_LIST:
                                                 idlist.remove(idlist[SOCKET_LIST.index(sock)])

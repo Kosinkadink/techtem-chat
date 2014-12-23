@@ -5,6 +5,7 @@ import socket
 import select
 
 LOG=[""] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
+servercommands = ["/pm"]
 
 def save(): 
 	print ("Save function not implemented yet.")
@@ -58,7 +59,7 @@ def chat_client():
 				# user entered a message
 				message = sys.stdin.readline().replace("\n", "")
                                 if message:
-				        if message[0] == "/":
+				        if message[0] == "/" and message.split()[0] not in servercommands:
 					        #that message was a command
         					if message.split()[0] == "/changename": 
 	        					name = message[len(message.split()[0])+1:].replace("\n","")
