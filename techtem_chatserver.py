@@ -10,7 +10,13 @@ SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
 
-lies = ["jaz is not rad", "jaz isn't rad"]
+maliciouswords = []
+#read maliciouswords file and append each line to the list of malicious words
+if os.path.isfile("maliciouswords"):
+        with open("maliciouswords", "r") as maliciouswordsfile:
+                for line in maliciouswordsfile:
+                        maliciouswords.append(line.replace("\n",""))
+
 
 def date():
 	return strftime("%Y-%m-%d")
@@ -77,10 +83,10 @@ def chat_server():
 							hsh = ""
 						if doDisplay:
 							#format all information into readable stuff
-							if message.lower() not in lies:
+							if message.lower() not in maliciouswords:
 								display = "[" + name + "] {" + hsh + "}: " + message
 							else:
-								display = name + " has lied."
+								display = name + " has said malicious words."
 							broadcast(server_socket, sock, display)
 				else:
 					# remove the socket that's broken   
