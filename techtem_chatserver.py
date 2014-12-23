@@ -70,7 +70,9 @@ def chat_server():
 							tripcode = data.splitlines()[2]
                                                         if tripcode:
 							        f.key(tripcode)
-							        hsh = f.encrypt(tripcode) 
+							        hsh = f.encrypt(tripcode)
+                                                        else:
+                                                                hsh = ""
 						except:
 							hsh = ""
 						if doDisplay:
