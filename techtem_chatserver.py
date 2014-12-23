@@ -15,18 +15,8 @@ lies = ["jaz is not rad", "jaz isn't rad"]
 def date():
 	return strftime("%Y-%m-%d")
 
-def time():
-	return strftime("%H:%M:%S")
-
-def localLog(a):
-	print a
-	log = open(date(), "a")
-	log.write(time() + " " + a + "\n")
-	log.close
-
-def announce(server_socket, sock, b):
-	broadcast(server_socket, sock, b)
-	localLog(b)
+def timestamp():
+	return "<" + strftime("%H:%M:%S") + "> "
 
 def chat_server():
 
@@ -38,7 +28,9 @@ def chat_server():
 	# add server socket object to the list of readable connections
 	SOCKET_LIST.append(server_socket)
 
-	print "Chat server started on port " + str(PORT)
+	log = open(date(), "a")
+        log.write(timestamp() + "Server has started.")
+        log.close
 
 	while 1:
 
@@ -51,8 +43,7 @@ def chat_server():
 			if sock == server_socket: 
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-				announce(server_socket, sockfd, "Someone has entered the chat")
-				localLog("(%s, %s)" % addr)
+				broadcast(server_socket, sockfd, "Someone has entered the chat")
 
 			# a message from a client, not a new connection
 			else:
@@ -61,7 +52,7 @@ def chat_server():
 				# receiving data from the socket.
 					data = sock.recv(RECV_BUFFER)
 				except:
-					announce(server_socket, sock, "Someone has disconnected")
+					broadcast(server_socket, sock, "Someone has disconnected")
 					continue
 				if data:
 					# there is something in the socket
@@ -73,33 +64,29 @@ def chat_server():
 						try:
 							name = data.splitlines()[1]
 						except:
-							localLog("Poorly formatted message sent")
-							doDisplay = False
-						if name:
-							try:
-								#find and hash the tripcode
-								tripcode = data.splitlines()[2]
-								f.key(tripcode)
-								hsh = f.encrypt(tripcode) 
-							except:
-								hsh = ""
-						else:
-							hsh = ""
 							name = "Anonymous"
+						try:
+							#find and hash the tripcode
+							tripcode = data.splitlines()[2]
+                                                        if tripcode:
+							        f.key(tripcode)
+							        hsh = f.encrypt(tripcode) 
+						except:
+							hsh = ""
 						if doDisplay:
 							#format all information into readable stuff
 							if message.lower() not in lies:
-								display = "[" + name + "] " + hsh + " <" + time() + ">: " + message
+								display = "[" + name + "] {" + hsh + "}: " + message
 							else:
 								display = name + " has lied."
-							announce(server_socket, sock, display)
+							broadcast(server_socket, sock, display)
 				else:
 					# remove the socket that's broken   
 					if sock in SOCKET_LIST:
 						SOCKET_LIST.remove(sock)
 
 						# at this stage, no data means probably the connection has been broken
-						announce(server_socket, sock, "Someone has disconnected") 
+						broadcast(server_socket, sock, "Someone has disconnected") 
 
 	server_socket.close()
     
@@ -110,6 +97,9 @@ def broadcast (server_socket, sock, message):
 		if socket != server_socket:
 			try :
 				socket.send(message)
+                                log = open(date(), "a")
+                                log.write(timestamp() + message + "\n")
+                                log.close
 			except :
 				# broken socket connection
 				socket.close()
