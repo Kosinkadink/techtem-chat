@@ -2,6 +2,7 @@
 import sys, socket, select, os
 from JedEncryptM import JedEncrypt
 from time import strftime
+from random import randint
 
 f = JedEncrypt()
 
@@ -33,10 +34,13 @@ def chat_server():
 	display="" 
 	# add server socket object to the list of readable connections
 	SOCKET_LIST.append(server_socket)
+        #corresponding id is 0, not in range of other
+        idlist = [0]
 
 	log = open(date(), "a")
         log.write(timestamp() + "Server has started.\n")
         log.close
+
 
 	while 1:
 
@@ -49,16 +53,20 @@ def chat_server():
 			if sock == server_socket: 
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-				broadcast(server_socket, sockfd, "Someone has entered the chat")
+                                sockid = randint(1,100)
+                                idlist.append(sockid)
+                                sockid = str(sockid)
+				broadcast(server_socket, sockfd, sockid, "Someone has entered the chat")
 
 			# a message from a client, not a new connection
 			else:
+                                sockid = str(idlist[SOCKET_LIST.index(sock)])
 			        # process data recieved from client, 
 				try:
 				# receiving data from the socket.
 					data = sock.recv(RECV_BUFFER)
 				except:
-					broadcast(server_socket, sock, "Someone has disconnected")
+					broadcast(server_socket, sock, sockid, "Someone has disconnected")
 					continue
 				if data:
 					# there is something in the socket
@@ -89,26 +97,26 @@ def chat_server():
 							display = "[" + name + "]" + hsh + ": " + message
 						else:
 							display = name + " has said malicious words."
-						broadcast(server_socket, sock, display)
+						broadcast(server_socket, sock, sockid, display)
 				else:
 					# remove the socket that's broken   
 					if sock in SOCKET_LIST:
+                                                idlist.remove(idlist[SOCKET_LIST.index(sock)])
 						SOCKET_LIST.remove(sock)
-
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sock, "Someone has disconnected") 
+						broadcast(server_socket, sock, sockid, "Someone has disconnected") 
 
 	server_socket.close()
     
 # broadcast chat messages to all connected clients
-def broadcast (server_socket, sock, message):
+def broadcast (server_socket, sock, sockid, message):
 	for socket in SOCKET_LIST:
 		# send the message only to peer
 		if socket != server_socket:
 			try :
 				socket.send(message)
                                 log = open(date(), "a")
-                                log.write(timestamp() + message + "\n")
+                                log.write(timestamp() + message + " " + sockid + "\n")
                                 log.close
 			except :
 				# broken socket connection
