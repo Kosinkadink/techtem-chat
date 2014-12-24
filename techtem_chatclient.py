@@ -3,12 +3,15 @@ import os
 import sys
 import socket
 import select
+from time import strftime
 
 LOG=[""] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
 servercommands = ["/pm"]
 
 def save(): 
 	print ("Save function not implemented yet.")
+def timestamp():
+        return "<" + strftime("%H:%M:%S") + "> "
 
 def chat_client():
 
@@ -49,7 +52,7 @@ def chat_client():
 					print '\nDisconnected from chat server'
 					sys.exit()
 				else :
-					LOG.append(data) #defined at the beginning. adds the new data to the LOG.
+					LOG.append(timestamp() + data) #defined at the beginning. adds the new data to the LOG.
 					os.system('cls' if os.name == 'nt' else 'tput reset') #cross platform screen clearing. this just in, clears the ENTIRE SHELL
 					sys.stdout.write('\n'.join(LOG[:])) #prints the entire log. alll of it.
 					sys.stdout.write('\n\n[' + name + '] ') # skips to new first line, rewrites name.
