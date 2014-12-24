@@ -135,15 +135,15 @@ def broadcast (server_socket, sock, sockid, message):
 		if socket != server_socket:
 			try :
 				socket.send(message)
-                                log = open(date(), "a")
-                                log.write(timestamp() + message + " " + sockid + "\n")
-                                log.close
 			except :
 				# broken socket connection
 				socket.close()
 				# broken socket, remove it
 				if socket in SOCKET_LIST:
 					SOCKET_LIST.remove(socket)
+	log = open(date(), "a")
+	log.write(timestamp() + message + " " + sockid + "\n")
+	log.close
 
 if __name__ == "__main__":
 
