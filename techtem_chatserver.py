@@ -58,7 +58,7 @@ def chat_server():
                                         sockid = randint(1,100)
                                 idlist.append(sockid)
                                 sockid = "{0:0=3d}".format(sockid)
-				broadcast(server_socket, sockfd, sockid, "Someone has entered the chat")
+				broadcast(server_socket, sockid, "Someone has entered the chat")
 
 			# a message from a client, not a new connection
 			else:
@@ -68,7 +68,7 @@ def chat_server():
 			                # receiving data from the socket.
 				        data = sock.recv(RECV_BUFFER)
                                 except:
-                                        broadcast(server_socket, sock, sockid, "Someone has disconnected")
+                                        broadcast(server_socket, sockid, "Someone has disconnected")
 		        	    	continue
 			    	if data:
 			        	# there is something in the socket
@@ -106,7 +106,7 @@ def chat_server():
 	        				else:
 		        				display = name + " has said malicious words."
                                                 if not isCommand:
-                                                        broadcast(server_socket, sock, sockid, display)
+                                                        broadcast(server_socket, sockid, display)
                                                 elif command == "/pm":
                                                         target = message.split()[1]
                                                         targetid = 0
@@ -124,12 +124,12 @@ def chat_server():
                                                 idlist.remove(idlist[SOCKET_LIST.index(sock)])
 						SOCKET_LIST.remove(sock)
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sock, sockid, "Someone has disconnected") 
+						broadcast(server_socket, sockid, "Someone has disconnected") 
 
 	server_socket.close()
     
 # broadcast chat messages to all connected clients
-def broadcast (server_socket, sock, sockid, message):
+def broadcast (server_socket, sockid, message):
 	for socket in SOCKET_LIST:
 		# send the message only to peer
 		if socket != server_socket:
