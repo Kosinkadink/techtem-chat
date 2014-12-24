@@ -23,13 +23,13 @@ def chat_client():
                 with open("settings.txt") as settingsfile:
                         for line in settingsfile:
                                 if line.split()[0] == "name":
-                                        name = line[5:].replace("\n","")
+                                        name = line[4:].replace("\n","")
                                 if line.split()[0] == "tripcode":
-                                        tripcode = line[9:].replace("\n", "")
+                                        tripcode = line[8:].replace("\n", "")
                                 if line.split()[0] == "host":
-                                        host = line[5:].replace("\n","")
+                                        host = line[4:].replace("\n","")
                                 if line.split()[0] == "port":
-                                        port = int(line[5:].replace("\n",""))
+                                        port = int(line[4:].replace("\n",""))
 
 	#request information
         if name == None:
