@@ -58,7 +58,7 @@ def chat_server():
 					sockid = randint(1,100)
 				idlist.append(sockid)
 				sockid = "{0:0=3d}".format(sockid)
-				broadcast(server_socket, sockid, "Someone has entered the chat")
+				broadcast(server_socket, sockid, "Someone has entered the chat. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 
 			# a message from a client, not a new connection
 			else:
@@ -68,7 +68,7 @@ def chat_server():
 					# receiving data from the socket.
 					data = sock.recv(RECV_BUFFER)
 				except:
-					broadcast(server_socket, sockid, "Someone has disconnected")
+					broadcast(server_socket, sockid, "Someone has disconnected. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 					continue
 				if data:
 					# there is something in the socket
@@ -119,14 +119,14 @@ def chat_server():
 							else:
 								sock.send("Invalid target")
                                                 elif command == "/peoplecount":
-                                                        sock.send("There are {} other people in the chatroom.".format(len(SOCKET_LIST)-2))
+                                                        sock.send(server_socket, sockid, "There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 				else:
 					# remove the socket that's broken
 					if sock in SOCKET_LIST:
 						idlist.remove(idlist[SOCKET_LIST.index(sock)])
 						SOCKET_LIST.remove(sock)
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sockid, "Someone has disconnected") 
+						broadcast(server_socket, sockid, "Someone has disconnected. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 
 	server_socket.close()
     
