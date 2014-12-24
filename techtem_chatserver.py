@@ -70,7 +70,7 @@ def chat_server():
 				except:
 					broadcast(server_socket, sock, sockid, "Someone has disconnected")
 					continue
-			    	if data:
+				if data:
 					# there is something in the socket
 					#find the message, if any
 					message = data.splitlines()[0]
@@ -124,12 +124,12 @@ def chat_server():
 						idlist.remove(idlist[SOCKET_LIST.index(sock)])
 						SOCKET_LIST.remove(sock)
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sock, sockid, "Someone has disconnected") 
+						broadcast(server_socket, sockid, "Someone has disconnected") 
 
 	server_socket.close()
     
 # broadcast chat messages to all connected clients
-def broadcast (server_socket, sock, sockid, message):
+def broadcast (server_socket, sockid, message):
 	for socket in SOCKET_LIST:
 		# send the message only to peer
 		if socket != server_socket:
