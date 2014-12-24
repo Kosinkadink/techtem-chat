@@ -11,7 +11,7 @@ servercommands = ["/pm"]
 def save(): 
 	print ("Save function not implemented yet.")
 def timestamp():
-        return "<" + strftime("%H:%M:%S") + "> "
+	return "<" + strftime("%H:%M:%S") + "> "
 
 def chat_client():
 
@@ -61,25 +61,25 @@ def chat_client():
 			else :
 				# user entered a message
 				message = sys.stdin.readline().replace("\n", "")
-                                if message:
+				if message:
 				        if message[0] == "/" and message.split()[0] not in servercommands:
 					        #that message was a command
         					if message.split()[0] == "/changename": 
 	        					name = message[len(message.split()[0])+1:].replace("\n","")
-                                                        if not name:
-                                                                name = "Anonymous"
+							if not name:
+								name = "Anonymous"
 		        			elif message.split()[0] == "/changetripcode":
-			        			tripcode = message[len(message.split()[0])+1:].replace("\n","")
-				        	elif message.split()[0] == "/quit" or message.split()[0] == "/leave":
-					        	save() #dummy function for now. will implement an option to save a local copy of the recorded chat. otherwise, all variables are flushed. will be off by default.
+							tripcode = message[len(message.split()[0])+1:].replace("\n","")
+						elif message.split()[0] == "/quit" or message.split()[0] == "/leave":
+							save() #dummy function for now. will implement an option to save a local copy of the recorded chat. otherwise, all variables are flushed. will be off by default.
         						quit()
-	        				elif message.split()[0] == "/help" or message.split()[0] == "/?":
-		        				sys.stdout.write("\nThanks for using the techtemchat client. Here are the commands you currently have available:\n/changename + new name: changes your name\n/changetripcode + new tripcode: changes your trip code.\n/quit OR /leave: exits gracefully\n/help OR /?: Displays this menu.\n")						
-			        		else:
-				        		print "Invalid command"
-        				else:
-	        				data = message + "\n" + name + "\n" + tripcode
-		        			s.send(data)
+						elif message.split()[0] == "/help" or message.split()[0] == "/?":
+							sys.stdout.write("\nThanks for using the techtemchat client. Here are the commands you currently have available:\n/changename + new name: changes your name\n/changetripcode + new tripcode: changes your trip code.\n/quit OR /leave: exits gracefully\n/help OR /?: Displays this menu.\n")						
+						else:
+							print "Invalid command"
+					else:
+						data = message + "\n" + name + "\n" + tripcode
+						s.send(data)
 				sys.stdout.write('[' + name + '] ')
 				sys.stdout.flush() 
 

@@ -14,9 +14,9 @@ PORT = 9009
 maliciouswords = []
 #read maliciouswords file and append each line to the list of malicious words
 if os.path.isfile("maliciouswords"):
-        with open("maliciouswords", "r") as maliciouswordsfile:
-                for line in maliciouswordsfile:
-                        maliciouswords.append(line.replace("\n",""))
+	with open("maliciouswords", "r") as maliciouswordsfile:
+		for line in maliciouswordsfile:
+			maliciouswords.append(line.replace("\n",""))
 
 
 def date():
@@ -34,12 +34,12 @@ def chat_server():
 	display="" 
 	# add server socket object to the list of readable connections
 	SOCKET_LIST.append(server_socket)
-        #corresponding id is 0, not in range of other
-        idlist = [0]
+ 	#corresponding id is 0, not in range of other
+	idlist = [0]
 
 	log = open(date(), "a")
-        log.write(timestamp() + "Server has started.\n")
-        log.close
+	log.write(timestamp() + "Server has started.\n")
+	log.close
 
 
 	while 1:
@@ -53,75 +53,75 @@ def chat_server():
 			if sock == server_socket: 
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-                                sockid = 0
-                                while sockid in idlist:
-                                        sockid = randint(1,100)
-                                idlist.append(sockid)
-                                sockid = "{0:0=3d}".format(sockid)
+				sockid = 0
+				while sockid in idlist:
+					sockid = randint(1,100)
+				idlist.append(sockid)
+				sockid = "{0:0=3d}".format(sockid)
 				broadcast(server_socket, sockfd, sockid, "Someone has entered the chat")
 
 			# a message from a client, not a new connection
 			else:
-                                sockid = "{0:0=3d}".format(idlist[SOCKET_LIST.index(sock)])
+				sockid = "{0:0=3d}".format(idlist[SOCKET_LIST.index(sock)])
     			        # process data recieved from client, 
-			        try:
-			                # receiving data from the socket.
-				        data = sock.recv(RECV_BUFFER)
-                                except:
-                                        broadcast(server_socket, sock, sockid, "Someone has disconnected")
-		        	    	continue
+				try:
+					# receiving data from the socket.
+					data = sock.recv(RECV_BUFFER)
+				except:
+					broadcast(server_socket, sock, sockid, "Someone has disconnected")
+					continue
 			    	if data:
-			        	# there is something in the socket
-            				#find the message, if any
-	    				message = data.splitlines()[0]
-    	        			if message:
-                                                if message[0] == "/":
-                                                        isCommand = True
-                                                        command = message.split()[0]
-                                                else:
-                                                        isCommand = False
+					# there is something in the socket
+					#find the message, if any
+					message = data.splitlines()[0]
+					if message:
+						if message[0] == "/":
+							isCommand = True
+							command = message.split()[0]
+						else:
+							isCommand = False
 
-	        				#find the name, if any
-		        			try:
-			        			name = data.splitlines()[1]
-                                                        if name == "":
-                                                            name = "Anonymous"
-					        except:
-        						name = "Anonymous"
-	        				try:
-		        				#find and hash the tripcode
-		        				tripcode = data.splitlines()[2]
-                                                        if tripcode:
-				        		        f.key(tripcode)
-						        	hsh = f.encrypt(tripcode)
-                                                        else:
-                                                                hsh = ""
-		        			except:
-			        			hsh = ""
-                                                if hsh:
-                                                       hsh = " {" + hsh + "}"
-			        		#format all information into readable stuff
-				        	if message.lower() not in maliciouswords:
-        						display = "[" + name + "]" + hsh + ": " + message
-	        				else:
-		        				display = name + " has said malicious words."
-                                                if not isCommand:
-                                                        broadcast(server_socket, sock, sockid, display)
-                                                elif command == "/pm":
-                                                        target = message.split()[1]
-                                                        targetid = 0
-                                                        with open(date(), "r") as log:
-                                                                for line in log:
-                                                                        if target in line:
-                                                                                targetid = int(line[-3:-1])
-                                                        if targetid:
-                                                                SOCKET_LIST[idlist.index(targetid)].send("##pm##" + display)
-                                                        else:
-                                                                sock.send("Invalid target")
-                                else:
-					# remove the socket that's broken   
+						#find the name, if any
+						try:
+							name = data.splitlines()[1]
+							if name == "":
+								name = "Anonymous"
+						except:
+							name = "Anonymous"
+						try:
+							#find and hash the tripcode
+							tripcode = data.splitlines()[2]
+							if tripcode:
+								f.key(tripcode)
+								hsh = f.encrypt(tripcode)
+							else:
+								hsh = ""
+						except:
+							hsh = ""
+						if hsh:
+							hsh = " {" + hsh + "}"
+						#format all information into readable stuff
+						if message.lower() not in maliciouswords:
+							display = "[" + name + "]" + hsh + ": " + message
+						else:
+							display = name + " has said malicious words."
+						if not isCommand:
+							broadcast(server_socket, sock, sockid, display)
+						elif command == "/pm":
+							target = message.split()[1]
+							targetid = 0
+							with open(date(), "r") as log:
+								for line in log:
+									if target in line:
+										targetid = int(line[-3:-1])
+							if targetid:
+								SOCKET_LIST[idlist.index(targetid)].send("##pm##" + display)
+							else:
+								sock.send("Invalid target")
+				else:
+					# remove the socket that's broken
 					if sock in SOCKET_LIST:
-                                                idlist.remove(idlist[SOCKET_LIST.index(sock)])
+						idlist.remove(idlist[SOCKET_LIST.index(sock)])
 						SOCKET_LIST.remove(sock)
 						# at this stage, no data means probably the connection has been broken
 						broadcast(server_socket, sock, sockid, "Someone has disconnected") 
