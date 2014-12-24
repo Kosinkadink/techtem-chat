@@ -6,7 +6,7 @@ import select
 from time import strftime
 
 LOG=[""] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
-servercommands = ["/pm"]
+servercommands = ["/pm", "/peoplecount"]
 
 def save(): 
 	print ("Save function not implemented yet.")
