@@ -3,22 +3,21 @@ import os
 import sys
 import socket
 import select
-from time import strftime
 
 LOG=[""] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
 servercommands = ["/pm", "/peoplecount"]
 
 def save(): 
 	print ("Save function not implemented yet.")
-def timestamp():
-	return "<" + strftime("%H:%M:%S") + "> "
 
 def chat_client():
 
+        #introduce variables
         name = None
         tripcode = None
         host = None
         port = None
+        #if there is a settings file, read it
         if os.path.isfile("settings.txt"):
                 with open("settings.txt") as settingsfile:
                         for line in settingsfile:
@@ -31,26 +30,23 @@ def chat_client():
                                 if line.split()[0] == "port":
                                         port = int(line[5:].replace("\n",""))
 
-	#request information
+	#request information, if needed
         if name == None:
 	        name = raw_input("Name (optional): ")
 	if name == "":
-		name = "Anonymous" #keeping it simple. having another variable for dispname will only confuse.
+		name = "Anonymous"
         if tripcode == None:
 	        tripcode = raw_input("Tripcode (also optional): ")
         if host == None:
                 host = raw_input("Server IP: ")
-        if port == None:
-                while not port:
-                        try:
-                                port = int(raw_input("Server Port: "))
-                        except:
-                                print "Invalid port. Try again."
+        while not port:
+                try:
+                        port = int(raw_input("Server Port: "))
+                except:
+                        print "Invalid port. Try again."
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.settimeout(2)
-	print host
-        print port
 	# connect to remote host
 	try :
 		s.connect((host, port))
@@ -78,7 +74,7 @@ def chat_client():
 					print '\nDisconnected from chat server'
 					sys.exit()
 				else :
-					LOG.append(timestamp() + data) #defined at the beginning. adds the new data to the LOG.
+					LOG.append(data) #defined at the beginning. adds the new data to the LOG.
 					os.system('cls' if os.name == 'nt' else 'tput reset') #cross platform screen clearing. this just in, clears the ENTIRE SHELL
 					sys.stdout.write('\n'.join(LOG[:])) #prints the entire log. alll of it.
 					sys.stdout.write('\n\n[' + name + '] ') # skips to new first line, rewrites name.
@@ -104,6 +100,7 @@ def chat_client():
 						else:
 							print "Invalid command"
 					else:
+                                                #format all the data and send it
 						data = message + "\n" + name + "\n" + tripcode
 						s.send(data)
 				sys.stdout.write('[' + name + '] ')

@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 import sys, socket, select, os
 from JedEncryptM import JedEncrypt
-from time import strftime
+from datetime import datetime
 from random import randint
 
 f = JedEncrypt()
@@ -20,10 +20,10 @@ if os.path.isfile("maliciouswords"):
 
 
 def date():
-	return strftime("%Y-%m-%d")
+	return datetime.now().strftime("%Y-%m-%d")
 
 def timestamp():
-	return "<" + strftime("%H:%M:%S") + "> "
+        return "<" + datetime.now().strftime("%H:%M:%S.%f") + "> "
 
 def chat_server():
 
@@ -34,7 +34,7 @@ def chat_server():
 	display="" 
 	# add server socket object to the list of readable connections
 	SOCKET_LIST.append(server_socket)
- 	#corresponding id is 0, not in range of other
+ 	#corresponding id is 0, not in range of other IDs
 	idlist = [0]
 
 	log = open(date(), "a")
@@ -50,20 +50,25 @@ def chat_server():
 
 		for sock in ready_to_read:
 			# a new connection request recieved
-			if sock == server_socket: 
+			if sock == server_socket:
+                                #This is partially a placeholder variable, but also makes sense because the current socet is the server socket
+                                sockid = 0
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-				sockid = 0
+                                #Assign a random ID to be associated with the new socket. This is to be logged, not broadcasted.
 				while sockid in idlist:
-					sockid = randint(1,100)
+					sockid = randint(1,9999)
+                                #because the id and socket are appended to their corresponding lists at the same time, they will share the same index value
 				idlist.append(sockid)
-				sockid = "{0:0=3d}".format(sockid)
+                                #turn the sock ID into a 4-digit string to make it easier to read from the log
+				sockid = "{0:0=4d}".format(sockid)
 				broadcast(server_socket, sockid, "Someone has entered the chat. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 
 			# a message from a client, not a new connection
 			else:
-				sockid = "{0:0=3d}".format(idlist[SOCKET_LIST.index(sock)])
-    			        # process data recieved from client, 
+                                #figure out what the ID is for the sending client
+				sockid = "{0:0=4d}".format(idlist[SOCKET_LIST.index(sock)])
+    			        # process data recieved from client
 				try:
 					# receiving data from the socket.
 					data = sock.recv(RECV_BUFFER)
@@ -108,14 +113,22 @@ def chat_server():
 						if not isCommand:
 							broadcast(server_socket, sockid, display)
 						elif command == "/pm":
-							target = message.split()[1]
+                                                        #find the parameter of the command (the phrase being scanned for in the timestamp)
+                                                        try:
+                                                                target = message.split()[1]
+                                                        except:
+                                                                #if there is no parameter, make it something that will definitely be invalid
+                                                                target = "invalid"
+                                                        #find that timestamp in the log
 							targetid = 0
 							with open(date(), "r") as log:
-								for line in log:
-									if target in line:
-										targetid = int(line[-3:-1])
+                                                                for line in log:
+                                                                        if target in line.split()[0]:
+                                                                                #find the id associated with that timestamp
+										targetid = int(line[-5:-1])
 							if targetid:
-								SOCKET_LIST[idlist.index(targetid)].send("##pm##" + display)
+                                                                #send the junk to the target
+                                                                SOCKET_LIST[idlist.index(targetid)].send(timestamp() + "##pm## [" + name + "]" + hsh + ": " + message[len(target)+ 5:])
 							else:
 								sock.send("Invalid target")
                                                 elif command == "/peoplecount":
@@ -132,11 +145,12 @@ def chat_server():
     
 # broadcast chat messages to all connected clients
 def broadcast (server_socket, sockid, message):
+        tobesent = timestamp() + message
 	for socket in SOCKET_LIST:
 		# send the message only to peer
 		if socket != server_socket:
 			try :
-				socket.send(message)
+				socket.send(tobesent)
 			except :
 				# broken socket connection
 				socket.close()
@@ -144,7 +158,7 @@ def broadcast (server_socket, sockid, message):
 				if socket in SOCKET_LIST:
 					SOCKET_LIST.remove(socket)
 	log = open(date(), "a")
-	log.write(timestamp() + message + " " + sockid + "\n")
+	log.write(tobesent + " " + sockid + "\n")
 	log.close
 
 if __name__ == "__main__":

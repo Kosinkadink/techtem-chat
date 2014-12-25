@@ -1,0 +1,4 @@
+host localhost
+port 9009
+name example name
+tripcode example trip
