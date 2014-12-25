@@ -3,12 +3,12 @@ import os
 import sys
 import socket
 import select
+from time import strftime
 
-LOG=[""] #for tracking the conversation. currently is not limited in length. someone can limit this if they so choose.
 servercommands = ["/pm", "/peoplecount"]
 
-def save(): 
-	print ("Save function not implemented yet.")
+def date():
+        return strftime(".%Y-%m-%d")
 
 def chat_client():
 
@@ -74,9 +74,11 @@ def chat_client():
 					print '\nDisconnected from chat server'
 					sys.exit()
 				else :
-					LOG.append(data) #defined at the beginning. adds the new data to the LOG.
+                                        with open(date(), "a") as log:
+                                                log.write(data + "\n")
 					os.system('cls' if os.name == 'nt' else 'tput reset') #cross platform screen clearing. this just in, clears the ENTIRE SHELL
-					sys.stdout.write('\n'.join(LOG[:])) #prints the entire log. alll of it.
+                                        with open(date(), "r") as log:
+					        sys.stdout.write(log.read()) #prints the entire log. alll of it.
 					sys.stdout.write('\n\n[{}] '.format(name)) # skips to new first line, rewrites name.
 					sys.stdout.flush()
 					
@@ -93,7 +95,7 @@ def chat_client():
 		        			elif message.split()[0] == "/changetripcode":
 							tripcode = message[len(message.split()[0])+1:].replace("\n","")
 						elif message.split()[0] == "/quit" or message.split()[0] == "/leave":
-							save() #dummy function for now. will implement an option to save a local copy of the recorded chat. otherwise, all variables are flushed. will be off by default.
+							print "Leaving chat server."
         						quit()
 						elif message.split()[0] == "/help" or message.split()[0] == "/?":
 							sys.stdout.write("\nThanks for using the techtemchat client. Here are the commands you currently have available:\n/changename + new name: changes your name\n/changetripcode + new tripcode: changes your trip code.\n/quit OR /leave: exits gracefully\n/help OR /?: Displays this menu.\n")						

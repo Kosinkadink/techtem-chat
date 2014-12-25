@@ -23,7 +23,7 @@ def date():
 	return datetime.now().strftime("%Y-%m-%d")
 
 def timestamp():
-        return "<{}>".format(datetime.now().strftime("%H:%M:%S.%f"))
+        return "<{}> ".format(datetime.now().strftime("%H:%M:%S.%f"))
 
 def chat_server():
 
@@ -131,7 +131,10 @@ def chat_server():
 										targetid = int(line[-5:-1])
 							if targetid:
                                                                 #send the junk to the target
-                                                                SOCKET_LIST[idlist.index(targetid)].send("{} ##pm## [{}]{}: {}".format(timestamp(), name, hsh, message[len(target)+ 5:]))
+                                                                tobesent = "{}##pm## [{}]{}: {}".format(timestamp(), name, hsh, message[len(target) + 5:])
+                                                                SOCKET_LIST[idlist.index(targetid)].send(tobesent)
+                                                                with open(date(), "a") as log:
+                                                                        log.write("{} [sent to ID: {}] {}\n".format(tobesent, targetid, sockid))
 							else:
 								sock.send("Invalid target")
                                                 elif command == "/peoplecount":
@@ -148,7 +151,7 @@ def chat_server():
     
 # broadcast chat messages to all connected clients
 def broadcast (server_socket, sockid, message):
-        tobesent = timestamp() + " " + message
+        tobesent = timestamp() + message
 	for socket in SOCKET_LIST:
 		# send the message only to peer
 		if socket != server_socket:
