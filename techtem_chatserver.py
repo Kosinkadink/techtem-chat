@@ -63,6 +63,9 @@ def chat_server():
                                 #turn the sock ID into a 4-digit string to make it easier to read from the log
 				sockid = "{0:0=4d}".format(sockid)
 				broadcast(server_socket, sockid, "Someone has entered the chat. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
+                                #log the new client's IP address, just in case.
+                                with open("IPlog" + date(), "a") as IPlog:
+                                        IPlog.write(timestamp() + "ID: " + sockid + " IP: " + addr[0])
 
 			# a message from a client, not a new connection
 			else:
