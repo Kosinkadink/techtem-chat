@@ -23,7 +23,7 @@ def date():
 	return datetime.now().strftime("%Y-%m-%d")
 
 def timestamp():
-        return "<" + datetime.now().strftime("%H:%M:%S.%f") + "> "
+        return "<{}>".format(datetime.now().strftime("%H:%M:%S.%f"))
 
 def chat_server():
 
@@ -107,10 +107,10 @@ def chat_server():
 						except:
 							hsh = ""
 						if hsh:
-							hsh = " {" + hsh + "}"
+							hsh = " {{{}}}".format(hsh)
 						#format all information into readable stuff
 						if message.lower() not in maliciouswords:
-							display = "[" + name + "]" + hsh + ": " + message
+							display = "[{}]{}: {}".format(name, hsh, message)
 						else:
 							display = name + " has said malicious words."
 						if not isCommand:
@@ -131,7 +131,7 @@ def chat_server():
 										targetid = int(line[-5:-1])
 							if targetid:
                                                                 #send the junk to the target
-                                                                SOCKET_LIST[idlist.index(targetid)].send(timestamp() + "##pm## [" + name + "]" + hsh + ": " + message[len(target)+ 5:])
+                                                                SOCKET_LIST[idlist.index(targetid)].send("{} ##pm## [{}]{}: {}".format(timestamp(), name, hsh, message[len(target)+ 5:]))
 							else:
 								sock.send("Invalid target")
                                                 elif command == "/peoplecount":
@@ -148,7 +148,7 @@ def chat_server():
     
 # broadcast chat messages to all connected clients
 def broadcast (server_socket, sockid, message):
-        tobesent = timestamp() + message
+        tobesent = timestamp() + " " + message
 	for socket in SOCKET_LIST:
 		# send the message only to peer
 		if socket != server_socket:

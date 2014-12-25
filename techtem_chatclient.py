@@ -58,7 +58,7 @@ def chat_client():
 	
 
 
-	sys.stdout.write("\n[" + name + "] "); sys.stdout.flush()
+	sys.stdout.write("\n[{}] ".format(name)); sys.stdout.flush()
  
 	while 1:
 		socket_list = [sys.stdin, s]
@@ -77,7 +77,7 @@ def chat_client():
 					LOG.append(data) #defined at the beginning. adds the new data to the LOG.
 					os.system('cls' if os.name == 'nt' else 'tput reset') #cross platform screen clearing. this just in, clears the ENTIRE SHELL
 					sys.stdout.write('\n'.join(LOG[:])) #prints the entire log. alll of it.
-					sys.stdout.write('\n\n[' + name + '] ') # skips to new first line, rewrites name.
+					sys.stdout.write('\n\n[{}] '.format(name)) # skips to new first line, rewrites name.
 					sys.stdout.flush()
 					
 			else :
@@ -101,9 +101,8 @@ def chat_client():
 							print "Invalid command"
 					else:
                                                 #format all the data and send it
-						data = message + "\n" + name + "\n" + tripcode
-						s.send(data)
-				sys.stdout.write('[' + name + '] ')
+						s.send("{}\n{}\n{}".format(message, name, tripcode))
+				sys.stdout.write('[{}] '.format(name))
 				sys.stdout.flush() 
 
 if __name__ == "__main__":
