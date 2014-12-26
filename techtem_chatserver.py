@@ -3,6 +3,7 @@ import sys, socket, select, os
 from JedEncryptM import JedEncrypt
 from datetime import datetime
 from random import randint
+from time import sleep
 
 f = JedEncrypt()
 
@@ -43,7 +44,7 @@ def chat_server():
 
 
 	while 1:
-
+                sleep(.1)
 		# get the list sockets which are ready to be read through select
 		# 4th arg, time_out  = 0 : poll and never block
 		ready_to_read,ready_to_write,in_error = select.select(SOCKET_LIST,[],[],0)
