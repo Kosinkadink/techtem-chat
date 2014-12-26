@@ -35,9 +35,8 @@ def chat_server():
 	display="" 
 	# add server socket object to the list of readable connections
 	SOCKET_LIST.append(server_socket)
- 	#corresponding id is 0, not in range of other IDs
-	idlist = [0]
 
+        addrlist = [HOST]
 	log = open(date(), "a")
 	log.write(timestamp() + "Server has started.\n")
 	log.close
@@ -53,31 +52,23 @@ def chat_server():
 			# a new connection request recieved
 			if sock == server_socket:
                                 #This is partially a placeholder variable, but also makes sense because the current socet is the server socket
-                                sockid = 0
 				sockfd, addr = server_socket.accept()
 				SOCKET_LIST.append(sockfd)
-                                #Assign a random ID to be associated with the new socket. This is to be logged, not broadcasted.
-				while sockid in idlist:
-					sockid = randint(1,9999)
-                                #because the id and socket are appended to their corresponding lists at the same time, they will share the same index value
-				idlist.append(sockid)
+                                addr = addr[0]
+                                #because the IP and socket are appended to their corresponding lists at the same time, they will share the same index value
+				addrlist.append(addr)
                                 #turn the sock ID into a 4-digit string to make it easier to read from the log
-				sockid = "{0:0=4d}".format(sockid)
-				broadcast(server_socket, sockid, "Someone has entered the chat. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
-                                #log the new client's IP address, just in case.
-                                with open("IPlog" + date(), "a") as IPlog:
-                                        IPlog.write(timestamp() + "ID: " + sockid + " IP: " + addr[0])
-
+				broadcast(server_socket, addr, "Someone has entered the chat. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 			# a message from a client, not a new connection
 			else:
-                                #figure out what the ID is for the sending client
-				sockid = "{0:0=4d}".format(idlist[SOCKET_LIST.index(sock)])
+                                #figure out what the IP is for the sending client
+				addr = addrlist[SOCKET_LIST.index(sock)]
     			        # process data recieved from client
 				try:
 					# receiving data from the socket.
 					data = sock.recv(RECV_BUFFER)
 				except:
-					broadcast(server_socket, sockid, "Someone has disconnected. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
+					broadcast(server_socket, addr, "Someone has disconnected. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 					continue
 				if data:
 					# there is something in the socket
@@ -115,7 +106,7 @@ def chat_server():
 						else:
 							display = name + " has said malicious words."
 						if not isCommand:
-							broadcast(server_socket, sockid, display)
+							broadcast(server_socket, addr, display)
 						elif command == "/pm":
                                                         #find the parameter of the command (the phrase being scanned for in the timestamp)
                                                         try:
@@ -124,18 +115,18 @@ def chat_server():
                                                                 #if there is no parameter, make it something that will definitely be invalid
                                                                 target = "invalid"
                                                         #find that timestamp in the log
-							targetid = 0
+							targetaddr = "invalid"
 							with open(date(), "r") as log:
                                                                 for line in log:
                                                                         if target in line.split()[0]:
-                                                                                #find the id associated with that timestamp
-										targetid = int(line[-5:-1])
-							if targetid:
+                                                                                #find the addr associated with that timestamp
+										targetaddr = message.split()[-1]
+							if targetaddr:
                                                                 #send the junk to the target
                                                                 tobesent = "{}##pm## [{}]{}: {}".format(timestamp(), name, hsh, message[len(target) + 5:])
-                                                                SOCKET_LIST[idlist.index(targetid)].send(tobesent)
+                                                                SOCKET_LIST[addrlist.index(targetaddr)].send(tobesent)
                                                                 with open(date(), "a") as log:
-                                                                        log.write("{} [sent to ID: {}] {}\n".format(tobesent, targetid, sockid))
+                                                                        log.write("{} [sent to ID: {}] {}\n".format(tobesent, targetid, addr))
 							else:
 								sock.send("Invalid target")
                                                 elif command == "/peoplecount":
@@ -143,15 +134,15 @@ def chat_server():
 				else:
 					# remove the socket that's broken
 					if sock in SOCKET_LIST:
-						idlist.remove(idlist[SOCKET_LIST.index(sock)])
+						addrlist.remove(addrlist[SOCKET_LIST.index(sock)])
 						SOCKET_LIST.remove(sock)
 						# at this stage, no data means probably the connection has been broken
-						broadcast(server_socket, sockid, "Someone has disconnected. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
+						broadcast(server_socket, addr, "Someone has disconnected. There is currently {} people in the chatroom.".format(len(SOCKET_LIST)-1))
 
 	server_socket.close()
     
 # broadcast chat messages to all connected clients
-def broadcast (server_socket, sockid, message):
+def broadcast (server_socket, addr, message):
         tobesent = timestamp() + message
 	for socket in SOCKET_LIST:
 		# send the message only to peer
@@ -165,7 +156,7 @@ def broadcast (server_socket, sockid, message):
 				if socket in SOCKET_LIST:
 					SOCKET_LIST.remove(socket)
 	log = open(date(), "a")
-	log.write(tobesent + " " + sockid + "\n")
+	log.write(tobesent + " " + addr + "\n")
 	log.close
 
 if __name__ == "__main__":
