@@ -115,18 +115,18 @@ def chat_server():
                                                                 #if there is no parameter, make it something that will definitely be invalid
                                                                 target = "invalid"
                                                         #find that timestamp in the log
-							targetaddr = "invalid"
+			                                targetaddr = None
 							with open(date(), "r") as log:
                                                                 for line in log:
                                                                         if target in line.split()[0]:
                                                                                 #find the addr associated with that timestamp
-										targetaddr = message.split()[-1]
+										targetaddr = line.split()[-1]
 							if targetaddr:
                                                                 #send the junk to the target
                                                                 tobesent = "{}##pm## [{}]{}: {}".format(timestamp(), name, hsh, message[len(target) + 5:])
                                                                 SOCKET_LIST[addrlist.index(targetaddr)].send(tobesent)
                                                                 with open(date(), "a") as log:
-                                                                        log.write("{} [sent to ID: {}] {}\n".format(tobesent, targetid, addr))
+                                                                        log.write("{} [sent to ID: {}] {}\n".format(tobesent, targetaddr, addr))
 							else:
 								sock.send("Invalid target")
                                                 elif command == "/peoplecount":
